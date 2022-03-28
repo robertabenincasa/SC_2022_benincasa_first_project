@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 16 22:54:47 2022
+from random import seed
+from random import randint
 
-@author: Lenovo
-"""
+""" The following dictionaries provide Wolfram's rules of cellular evolution. 
+The 0 indicates an alive cell, whereas the dot represent a dead one."""
 
 rule30 = {"000": '.',
           "00.": '.',
@@ -41,9 +40,14 @@ rule184 = {"000": '0',
           ".0.": '.',
           "..0": '.',
          }
+seed(7)
+def generate_state(n):
+"""This function generates the initial state as a string having n elements composed of . and only one 0, i.e. only dead cells except for one."""
+    state = ['.']*(n-1)
+    state.insert(randint(0,n-1),'0')
+    initial_state=''.join(state)
+    return initial_state
 
-def generate_state():
-    return "............................0.................................."
 
 def evolve(stato,bc,n):
     evoluto=[''] * n
@@ -66,7 +70,7 @@ def evolve(stato,bc,n):
     return new_state
 
 def simulation(nsteps,bc,n):
-    initial_state = generate_state()
+    initial_state = generate_state(n)
     states_seq = [initial_state]
     print(initial_state)
     for i in range(nsteps):
@@ -77,18 +81,20 @@ def simulation(nsteps,bc,n):
     return states_seq
 
 bc='period'
-states_seq=simulation(100,bc,63)
+n=12
+nsteps=10
+states_seq=simulation(nsteps,bc,n)
 #print(states_seq)
 
 ########################################################
 
 def test_generation_valid_state():
-    state = generate_state()
+    state = generate_state(n)
     assert set(state) == {'.', '0'}
     
 
 def test_generation_single_alive():
-    state = generate_state()
+    state = generate_state(n)
     num_of_0 = sum(1 for i in state if i=='0')
     assert num_of_0 == 1
     
@@ -98,11 +104,9 @@ def test_evolution_valid_state():
         
 def test_evolution_valid_length():
     for state in states_seq:
-        assert len(state)==len(generate_state())
+        assert len(state)==len(generate_state(n))
 
 def test_valid_bcs():
     assert bc in ['const','refl','period']
     
 #########################################################
-
-
